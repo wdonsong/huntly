@@ -3,6 +3,7 @@ package com.huntly.server.service;
 import com.huntly.common.exceptions.NoSuchDataException;
 import com.huntly.interfaces.external.dto.ConnectorItem;
 import com.huntly.interfaces.external.dto.PageOperateResult;
+import com.huntly.interfaces.external.model.ContentType;
 import com.huntly.interfaces.external.model.LibrarySaveStatus;
 import com.huntly.interfaces.external.model.UpdatePageDetailRequest;
 import com.huntly.interfaces.external.query.PageQuery;
@@ -490,7 +491,7 @@ public class PageService extends BasePageService {
     }
 
     public Long checkUrlConflict(String url, Long excludePageId) {
-        Integer snippetContentType = 4;
+        int snippetContentType = ContentType.SNIPPET.getCode();
         Pageable limitOne = PageRequest.of(0, 1);
         List<Page> pages = pageRepository.findByUrlExcludingContentType(url, snippetContentType, limitOne);
         if (!pages.isEmpty() && !pages.get(0).getId().equals(excludePageId)) {

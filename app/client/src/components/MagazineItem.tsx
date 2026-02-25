@@ -8,7 +8,6 @@ import {Link} from "react-router-dom";
 import {PageItem} from "../api";
 import SmartMoment from "./SmartMoment";
 import PageOperationButtons, {PageOperateEvent} from "./PageOperationButtons";
-import {useState, useEffect} from "react";
 import TwitterIcon from '@mui/icons-material/Twitter';
 import {TweetProperties} from "../interfaces/tweetProperties";
 import TweetRoot from "./Tweet/TweetRoot";
@@ -40,7 +39,7 @@ const sortLabelMap: Record<SORT_VALUE, string> = {
 type MagazineItemProps = {
   page: PageItem,
   onOperateSuccess?: (event: PageOperateEvent) => void,
-  onPageSelect?: (event: any, id: number) => void,
+  onPageSelect?: (event: React.MouseEvent<HTMLAnchorElement>, id: number) => void,
   showMarkReadOption?: boolean,
   currentVisit?: boolean,
   pageListSort?: SORT_VALUE
@@ -55,7 +54,9 @@ export default function MagazineItem({
                                        pageListSort,
                                      }: MagazineItemProps) {
 
-  const [readed, setReaded] = useState(page.markRead);
+  // Use derived state from props instead of local state sync
+  // This avoids the anti-pattern of syncing props to state
+  const isRead = page.markRead;
   const isTweet = page.contentType === 1 || page.contentType === 3;
   const isSnippet = page.contentType === 4;
   const isGithub = page.connectorType === ConnectorType.GITHUB;
@@ -77,13 +78,7 @@ export default function MagazineItem({
   }
   let repoProps: GithubRepoProperties = isGithub && page.pageJsonProperties != null ? JSON.parse(page.pageJsonProperties) : null;
 
-  // Update local state when page.markRead changes
-  useEffect(() => {
-    setReaded(page.markRead);
-  }, [page.markRead]);
-
   function pageSelect(e: React.MouseEvent<HTMLAnchorElement>, id: number) {
-    setReaded(true);
     if (onPageSelect) {
       onPageSelect(e, id);
     }
@@ -101,11 +96,11 @@ export default function MagazineItem({
             <Link to={`/page/${page.id}`} onClick={(e) => pageSelect(e, page.id)}>
               <Box className={""}>
                 <Typography gutterBottom variant="subtitle1"
-                            className={`line-clamp-2 font-bold break-all ${readed && showMarkReadOption ? "text-neutral-500" : ""}`}>
+                            className={`line-clamp-2 font-bold break-all ${isRead && showMarkReadOption ? "text-neutral-500" : ""}`}>
                   {page.title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary"
-                            className={`line-clamp-3 break-all  ${readed && showMarkReadOption ? "text-neutral-400" : ""}`}
+                            className={`line-clamp-3 break-all  ${isRead && showMarkReadOption ? "text-neutral-400" : ""}`}
                             sx={{
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',

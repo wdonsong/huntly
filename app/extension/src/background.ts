@@ -12,6 +12,7 @@ import {
   getCollectionTree,
 } from "./services";
 import { combineUrl } from "./utils";
+import { MessageTypes } from "./messageTypes";
 import {sseRequestManager} from "./sseTaskManager";
 import {
   getAIProvidersStorage,
@@ -107,7 +108,7 @@ function startProcessingWithShortcuts(task: any, shortcuts: any[], skipPreview: 
   const startProcessing = () => {
     // 发送处理开始的消息
     chrome.tabs.sendMessage(task.tabId, {
-      type: 'shortcuts_processing_start',
+      type: MessageTypes.SHORTCUTS_PROCESSING_START,
       payload: {
         title: task.shortcutName,
         shortcutName: task.shortcutName,
@@ -133,7 +134,7 @@ function startProcessingWithShortcuts(task: any, shortcuts: any[], skipPreview: 
         // 发送流式数据到预览页面
         try {
           chrome.tabs.sendMessage(task.tabId, {
-            type: 'shortcuts_process_data',
+            type: MessageTypes.SHORTCUTS_PROCESS_DATA,
             payload: {
               data: data,
               accumulatedContent: accumulatedContent,
@@ -152,7 +153,7 @@ function startProcessingWithShortcuts(task: any, shortcuts: any[], skipPreview: 
         // 发送处理结果到预览页面
         try {
           chrome.tabs.sendMessage(task.tabId, {
-            type: 'shortcuts_process_result',
+            type: MessageTypes.SHORTCUTS_PROCESS_RESULT,
             payload: {
               content: accumulatedContent,
               title: task.shortcutName,
@@ -169,7 +170,7 @@ function startProcessingWithShortcuts(task: any, shortcuts: any[], skipPreview: 
 
         try {
           chrome.tabs.sendMessage(task.tabId, {
-            type: 'shortcuts_process_error',
+            type: MessageTypes.SHORTCUTS_PROCESS_ERROR,
             payload: {
               error: error.message || 'Processing failed',
               title: task.shortcutName,
@@ -191,7 +192,7 @@ function startProcessingWithShortcuts(task: any, shortcuts: any[], skipPreview: 
 
   // Send shortcuts_preview to open the preview window first
   chrome.tabs.sendMessage(task.tabId, {
-    type: 'shortcuts_preview',
+    type: MessageTypes.SHORTCUTS_PREVIEW,
     payload: {
       shortcuts: shortcuts,
       taskId: task.taskId,

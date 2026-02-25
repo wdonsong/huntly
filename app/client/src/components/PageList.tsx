@@ -477,7 +477,7 @@ const PageList = (props: PageListProps) => {
                       </div>
                   }
                   {data.pages.map((pages, index) =>
-                    <React.Fragment key={index}>
+                    <React.Fragment key={pages[0]?.id || `page-${index}`}>
                       {pages.map((page) => {
                           return <div 
                             className={`w-full`} 
